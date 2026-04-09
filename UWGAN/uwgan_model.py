@@ -567,10 +567,10 @@ class UWGAN(object):
         :param depth: air image depth map
         :return: synthetic image
         """
-        with tf.variable_scope("wc_generator", reuse=True):
+        with tf.variable_scope("wc_generator", reuse=tf.AUTO_REUSE):
 
             # water-based attenuation and backscatter
-            with tf.variable_scope("g_atten", reuse=True):
+            with tf.variable_scope("g_atten", reuse=tf.AUTO_REUSE):
                 eta_r_raw = tf.get_variable(name='g_eta_r_raw', shape=[1, 1, 1], dtype=tf.float32,
                                         initializer=tf.random_normal_initializer(mean=0.35, stddev=0.01))
                 eta_g_raw = tf.get_variable(name='g_eta_g_raw', shape=[1, 1, 1], dtype=tf.float32,

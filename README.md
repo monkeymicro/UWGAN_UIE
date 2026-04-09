@@ -69,9 +69,16 @@ Data directory structure in UWGAN
 windows
 ```sh
 # 安装低版本tf
-pip install tensorflow-gpu==2.10.0 opencv-python==4.9.0
+pip install PyYAML
+pip install tensorflow-gpu==2.10.0
+pip install opencv-python==4.9.0.80
+pip install numpy==1.24.3
+pip install tf-slim==1.1.0
 # 老版本靠谱 新版本有问题
-pip install setuptools==69.5.1
+pip install setuptools=69.5.1
+pip install scipy==1.15.3
+# 2. 使用 pip 安装
+pip install pyzmq
 # 在虚拟环境中安装cuda
 conda install -c conda-forge cudatoolkit=11.2.2 cudnn=8.1.0.77 -y
 # 刷新环境
@@ -79,6 +86,10 @@ conda deactivate
 conda activate tfvision
 # 环境中测试gpu是否识别
 python -c "import tensorflow.compat.v1 as tf; print('TF Version:', tf.__version__); print('Num GPUs:', len(tf.config.list_physical_devices('GPU')))"
+```
+```sh
+conda --set auto_activate false
+# 可以停止每次开终端自动开base环境
 ```
 
 4G显存建议batchsize=8
