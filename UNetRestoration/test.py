@@ -5,9 +5,10 @@ Evaluation mode or Test mode
 
 """
 
-import tensorflow as tf
+import tensorflow.compat.v1 as tf
+tf.disable_v2_behavior()
 import numpy as np
-from scipy import misc
+import cv2
 import glob
 import time
 import os
@@ -63,7 +64,7 @@ if __name__ == '__main__':
     test_x = np.empty(shape=[num_test_image, 256, 256, 3], dtype=np.float32)
     i = 0
     for path_i in test_path:
-        img_i = normalize_image(misc.imresize(misc.imread(path_i).astype('float32'), size=(256, 256), interp='cubic'))
+        img_i = normalize_image(cv2.resize(cv2.imread(path_i).astype('float32'), size=(256, 256), interpolation=cv2.INTER_CUBIC))
         # img_i = normalize_image(misc.imread(path_i).astype('float32'))
         test_x[i, :, :, :] = img_i
         i += 1
@@ -109,7 +110,7 @@ if __name__ == '__main__':
 
         for img_g in gen_test_images:
             # misc.imsave(gen_path + str(gen_num) + '_gen.png', img_g[0])
-            misc.imsave(gen_path + test_path[gen_num].split('/')[-1][:-4] + '_gen.png', img_g[0])
+            cv2.imwrite(gen_path + test_path[gen_num].split('/')[-1][:-4] + '_gen.png', img_g[0])
             # print(img_g[0].shape)
             gen_num += 1
         print("Done with test image, gen image: %d" % gen_num)

@@ -1,0 +1,9 @@
+/data
+/checkpoint_color1
+/logs_color1
+/results_color1
+/logs_unet
+/checkpoint_unet
+/results_unet
+/UWGAN/__pycache__
+/UNetRestoration/__pycache__

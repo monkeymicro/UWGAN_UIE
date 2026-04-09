@@ -13,8 +13,7 @@ import os
 import glob
 import random
 import numpy as np
-# import cv2
-from scipy import misc
+import cv2
 
 
 class BatchRename(object):
@@ -103,12 +102,10 @@ class ImageProcess():
 
         i = 0
         for a, b in zip(batchA_paths, batchB_paths):
-            # a_img = self.normalize_image(misc.imresize(misc.imread(a).astype('float32'),
-            #                                            size=(256, 256), interp='cubic'))
-            a_img = self.normalize_image(misc.imread(a).astype('float32'))
-            # b_img = self.normalize_image(misc.imresize(misc.imread(b).astype('float32'),
-            #                                            size=(256, 256), interp='cubic'))
-            b_img = self.normalize_image(misc.imread(b).astype('float32'))
+            # a_img = self.normalize_image(cv2.resize(cv2.imread(a).astype('float32'), size=(256, 256), interpolation=cv2.INTER_CUBIC))
+            a_img = self.normalize_image(cv2.imread(a).astype('float32'))
+            # b_img = self.normalize_image(cv2.resize(cv2.imread(b).astype('float32'), size=(256, 256), interpolation=cv2.INTER_CUBIC))
+            b_img = self.normalize_image(cv2.imread(b).astype('float32'))
 
             # data augmentation
             if self.is_aug:

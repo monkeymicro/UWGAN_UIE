@@ -7,36 +7,17 @@ Then, we use the u-net, which will attempt to correct the colors
 
 """
 
-import tensorflow as tf
-from scipy import misc
+import tensorflow.compat.v1 as tf
+tf.disable_v2_behavior()
+
 import math
-import glob
-import numpy as np
 import os
 import time
 os.environ['CUDA_VISIBLE_DEVICES'] = '0'
 
 # my imports
 from unet_model import UNet
-from utils import BatchRename, ImageProcess
-
-
-init_learning_rate = 1e-4
-
-# Momentum Optimizer
-nesterov_momentum = 0.9
-
-# l2 regularizer
-weight_decay = 1e-4
-
-batch_size = 32
-total_epochs = 10
-
-
-trainA_path = '/home/frost/image_enhance/UIE/UWGAN_Results/Water_near_1/results_1/water/'
-trainB_path = '/home/frost/image_enhance/UIE/UWGAN_Results/Water_near_1/results_1/air/'
-log_path = './Far2/logs_l1/'
-ckpt_path = './Far2/checkpoints_l1/'
+from utils import ImageProcess
 
 
 def cosine_learning_rate(learn_rate, n_epochs, cur_epoch):
@@ -56,10 +37,29 @@ def cosine_learning_rate(learn_rate, n_epochs, cur_epoch):
 
 if __name__ == "__main__":
 
-    if not os.path.exists(log_path):
-        os.makedirs(log_path)
-    if not os.path.exists(ckpt_path):
-        os.mkdir(ckpt_path)
+    init_learning_rate = 1e-4
+
+    # Momentum Optimizer
+    nesterov_momentum = 0.9
+
+    # l2 regularizer
+    weight_decay = 1e-4
+
+    batch_size = 32 # 显存需要12G至少，现在2都无法训练
+    total_epochs = 200
+
+    # find the path
+    file_path = os.path.dirname(os.path.abspath(__file__))
+    parent_path = os.path.dirname(file_path)
+    # fake or real water images path
+    trainA_path = parent_path + '/results_color1/water/'
+    # air images path
+    trainB_path = parent_path + '/results_color1/air/'
+    log_path = parent_path + '/logs_unet/'
+    os.makedirs(log_path, exist_ok=True)
+    ckpt_path = parent_path + '/checkpoints_unet/'
+    os.makedirs(ckpt_path, exist_ok=True)
+    
     print("Params Config:\n")
     print("Learning Rate: %f" % init_learning_rate)
     print("    Optimizer: Adam")
@@ -177,5 +177,4 @@ if __name__ == "__main__":
 
             if epoch % 10 == 0:
                 U_NET.save(sess=sess, model_path=ckpt_path + str(epoch)+'u_net.ckpt')
-
 

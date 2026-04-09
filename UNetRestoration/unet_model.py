@@ -20,7 +20,8 @@ Original Paper:
 """
 
 
-import tensorflow as tf
+import tensorflow.compat.v1 as tf
+tf.disable_v2_behavior()
 
 
 def conv_conv_pool(input_, n_filters, training, name, pool=True):
@@ -43,7 +44,11 @@ def conv_conv_pool(input_, n_filters, training, name, pool=True):
                                filters=n_filters,
                                kernel_size=(3, 3),
                                padding='SAME',
-                               kernel_initializer=tf.contrib.layers.variance_scaling_initializer(),
+                               kernel_initializer=tf.keras.initializers.VarianceScaling(
+                                   scale=2.0, 
+                                   mode='fan_in', 
+                                   distribution='truncated_normal'
+                               ),
                                name="conv_1")
         # net = tf.layers.batch_normalization(inputs=net,
         #                                     training=training,
@@ -54,7 +59,11 @@ def conv_conv_pool(input_, n_filters, training, name, pool=True):
                                filters=n_filters,
                                kernel_size=(3, 3),
                                padding='SAME',
-                               kernel_initializer=tf.contrib.layers.variance_scaling_initializer(),
+                               kernel_initializer=tf.keras.initializers.VarianceScaling(
+                                   scale=2.0, 
+                                   mode='fan_in', 
+                                   distribution='truncated_normal'
+                               ),
                                name="conv_2")
         # net = tf.layers.batch_normalization(inputs=net,
         #                                     training=training,
@@ -66,9 +75,9 @@ def conv_conv_pool(input_, n_filters, training, name, pool=True):
 
         # if pool is True
         pool_net = tf.layers.max_pooling2d(inputs=net,
-                                           pool_size=(2, 2),
-                                           strides=2,
-                                           name="pool_{}".format(name))
+                        pool_size=(2, 2),
+                        strides=2,
+                        name="pool_{}".format(name))
 
         return net, pool_net
 
@@ -85,11 +94,15 @@ def upconv_2d(input_, n_filters, name):
     """
 
     net = tf.layers.conv2d_transpose(inputs=input_,
-                                     filters=n_filters,
-                                     kernel_size=2,
-                                     strides=2,
-                                     kernel_initializer=tf.contrib.layers.variance_scaling_initializer(),
-                                     name="upsample_{}".format(name))
+                    filters=n_filters,
+                    kernel_size=2,
+                    strides=2,
+                    kernel_initializer=tf.keras.initializers.VarianceScaling(
+                                scale=2.0, 
+                                mode='fan_in', 
+                                distribution='truncated_normal'
+                            ),
+                    name="upsample_{}".format(name))
 
     return net
 
@@ -179,11 +192,11 @@ class UNet(object):
 
         # 1x1 conv, (N, 512, 512, 3) \ (N, 256, 256, 3)
         output = tf.layers.conv2d(inputs=conv7,
-                                  filters=3,
-                                  kernel_size=(1, 1),
-                                  padding='SAME',
-                                  kernel_initializer=tf.contrib.layers.variance_scaling_initializer(),
-                                  activation=tf.nn.tanh)
+                        filters=3,
+                        kernel_size=(1, 1),
+                        padding='SAME',
+                        kernel_initializer=tf.keras.initializers.glorot_normal(),
+                        activation=tf.nn.tanh)
         # resize to original size 405 x 720
         # output = tf.image.resize_images(images=output, size=(405, 720), method=tf.image.ResizeMethod.BICUBIC)
         print(output)

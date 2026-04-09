@@ -51,7 +51,7 @@ Data directory structure in UWGAN
 │   │   └── *.png
 │   ├── air_depth  
 │   │   └── *.mat
-│   └── water_images 
+│   └── water_images_far 
 │       └── *.jpg
 └── ...
 ```
@@ -60,6 +60,44 @@ Data directory structure in UWGAN
 
 * Train a UWGAN model - Firstly, change directory to UWGAN folder, then run `python uwgan_mian.py`, you can adjust learning parameters in `uwgan_main.py`.
 * Train a UNet restoration model - Firstly, change directory to UNetRestoration folder, then run `python train.py`, you can adjust learning parameters and change loss functions in `train.py`. Run `python test.py` after training has been completed.
+
+## train
+
+
+参考论文中的参数设置，如下进行GAN训练:
+
+windows
+```sh
+# 安装低版本tf
+pip install tensorflow-gpu==2.10.0 opencv-python==4.9.0
+# 老版本靠谱 新版本有问题
+pip install setuptools==69.5.1
+# 在虚拟环境中安装cuda
+conda install -c conda-forge cudatoolkit=11.2.2 cudnn=8.1.0.77 -y
+# 刷新环境
+conda deactivate
+conda activate tfvision
+# 环境中测试gpu是否识别
+python -c "import tensorflow.compat.v1 as tf; print('TF Version:', tf.__version__); print('Num GPUs:', len(tf.config.list_physical_devices('GPU')))"
+```
+
+4G显存建议batchsize=8
+```sh
+python .\UWGAN\uwgan_main.py --epoch=30 --learning_rate=0.0001 --batch_size=8 --beta1=0.5 --is_train=True
+```
+输出
+```                                                                                                                                                                                               
+TF Version: 2.10.0                                                                                                                                                                              
+Num GPUs: 1   
+```
+就是OK了。
+
+
+推理测试
+```sh
+python uwgan_main.py --is_train False
+```
+
 
 # Results and Discussion
 

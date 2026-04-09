@@ -2,7 +2,9 @@ import os
 import pprint
 import numpy as np
 os.environ["CUDA_VISIBLE_DEVICES"] = "0"
-import tensorflow as tf
+import tensorflow.compat.v1 as tf
+tf.disable_v2_behavior()
+
 from uwgan_model import UWGAN
 
 
@@ -24,12 +26,12 @@ flags.DEFINE_string("air_dataset", "air_images", "The name of dataset with air i
 flags.DEFINE_string("depth_dataset", "air_depth", "The name of dataset with depth images")
 flags.DEFINE_string("input_fname_pattern", "*.png", "Glob pattern of filename of input images [*]")
 flags.DEFINE_string("checkpoint_dir", "checkpoint_color1", "Directory name to save the checkpoints [checkpoint]")
-flags.DEFINE_string("log_dir", "logs_color1", "Directory name to save the logs [logs]")
-flags.DEFINE_string("results_dir", "results_color1", "Directory name to save the checkpoints [results]")
+flags.DEFINE_string("log_directory", "logs_color1", "Directory name to save the logs [logs]")
+flags.DEFINE_string("results_dir", "results_color1", "Directory name to save the test results [results]")
 flags.DEFINE_boolean("is_train", True, "True for training, False for testing [False]")
 flags.DEFINE_boolean("is_crop", True, "True for training, False for testing [False]")
 flags.DEFINE_boolean("visualize", False, "True for visualizing, False for nothing [False]")
-flags.DEFINE_integer("save_epoch", 1, "The size of the output images to produce. If None, same value as output_height [None]")
+flags.DEFINE_integer("save_epoch", 5, "The size of the output images to produce. If None, same value as output_height [None]")
 FLAGS = flags.FLAGS
 
 
@@ -45,8 +47,8 @@ def main(_):
         os.makedirs(FLAGS.checkpoint_dir)
     if not os.path.exists(FLAGS.results_dir):
         os.mkdir(FLAGS.results_dir)
-    if not os.path.exists(FLAGS.log_dir):
-        os.mkdir(FLAGS.log_dir)
+    if not os.path.exists(FLAGS.log_directory):
+        os.mkdir(FLAGS.log_directory)
 
     run_config = tf.ConfigProto()
     run_config.gpu_options.allow_growth = True
@@ -66,7 +68,8 @@ def main(_):
             input_fname_pattern=FLAGS.input_fname_pattern,
             is_crop=FLAGS.is_crop,
             checkpoint_dir=FLAGS.checkpoint_dir,
-            results_dir = FLAGS.results_dir)
+            results_dir = FLAGS.results_dir,
+            log_directory = FLAGS.log_directory)
 
         if FLAGS.is_train:
             wgan.train(FLAGS)

@@ -5,9 +5,10 @@ Evaluation mode or Test mode
 
 """
 
-import tensorflow as tf
+import tensorflow.compat.v1 as tf
+tf.disable_v2_behavior()
 import numpy as np
-from scipy import misc
+import cv2 
 import time
 import os
 os.environ['CUDA_VISIBLE_DEVICES'] = '0'
@@ -37,9 +38,9 @@ if __name__ == '__main__':
     # correct image
     image_r = tf.placeholder(dtype=tf.float32, shape=[1, 256, 256, 3], name='image_r')
     # load test image
-    test_image = normalize_image(misc.imresize(misc.imread(image_path), size=(256, 256), interp='cubic'))
+    test_image = normalize_image(cv2.resize(cv2.imread(image_path), size=(256, 256), interpolation=cv2.INTER_CUBIC))
     print(test_image)
-    real_image = normalize_image(misc.imresize(misc.imread(gt_image_path), size=(256, 256), interp='cubic'))
+    real_image = normalize_image(cv2.resize(cv2.imread(gt_image_path), size=(256, 256), interpolation=cv2.INTER_CUBIC))
     print(real_image)
     test_image_np = np.empty(shape=[1, 256, 256, 3], dtype=np.float32)
     test_image_np[0, :, :, :] = test_image
@@ -61,6 +62,6 @@ if __name__ == '__main__':
     end_time = time.time()
     print("Time cost: %f" % (end_time - begin_time))
 
-    misc.imsave('./res_gen2.png', gen[0])
-    misc.imsave('./img_ori2.png', test_image)
-    misc.imsave('./img_real.png', real_image)
+    cv2.imwrite('./res_gen2.png', gen[0])
+    cv2.imwrite('./img_ori2.png', test_image)
+    cv2.imwrite('./img_real.png', real_image)
